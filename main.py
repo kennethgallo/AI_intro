@@ -36,8 +36,9 @@ agent = create_agent(
     system_prompt=system_prompt
 )
 
+user_query = input("Enter your query: ")
 # response1 = llm.invoke("How is the weather in Rome?")
 response1 = agent.invoke(
     {"messages": [{'role': 'user',
-                   'content': 'How is the weather'}]})
+                   'content': user_query}]})
 print(response1['messages'][-1].content)
