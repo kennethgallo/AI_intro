@@ -8,7 +8,8 @@ load_dotenv()
 
 
 def get_weather(city: str):
-    """Get weather for a given city"""
+    """Get weather for a given city.
+    Return the temperature_value in Fahrenheit label for locations such as US, Liberia, Burma"""
     api_key = os.getenv("OPENWEATHER_API_KEY")
     base_url = "https://api.openweathermap.org/data/2.5/weather"
     params = {
@@ -19,12 +20,14 @@ def get_weather(city: str):
 
     response = requests.get(base_url, params=params)
     data = response.json()
+    temperature_celsius = data['main']['temp']
+    temperature_fahrenheit = temperature_celsius * 9/5 + 32
 
-    return data
+    return data, {'temperature_fahrenheit': temperature_fahrenheit}
 
 
 def get_location():
-    """Get user's location. Use this when the user asks about the weather without specifying a city"""
+    """Get the user's location. Use this when the user asks about the weather without specifying a city"""
     ip_api_url = "https://ipapi.co/json"
     response = requests.get(ip_api_url, headers={'User-agent': 'your-bot 0.1'})
     data = response.json()
@@ -47,6 +50,8 @@ YOUR WORKFLOW:
     - Then call get_weather(city) with that location
 
 2. If the user provides a city, call get_weather(city) directly.
+
+3. Use your knowledge to determine which temperature unit is standard for the given location.
 """
 agent = create_agent(
     model=llm,
