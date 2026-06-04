@@ -1,5 +1,6 @@
 import requests
 from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_openai import ChatOpenAI
 from dotenv import load_dotenv
 from langchain.agents import create_agent
 import os
@@ -37,8 +38,8 @@ def get_location():
 
 
 # initialize llm
-llm = ChatGoogleGenerativeAI(
-    model="gemini-3.1-flash-lite",
+llm = ChatOpenAI(
+    model="gpt-5.4-nano-2026-03-17",
     temperature=0.7
 )
 
