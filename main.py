@@ -1,6 +1,8 @@
 from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_openai import ChatOpenAI
 from dotenv import load_dotenv
 from langchain.agents import create_agent
+from langgraph.checkpoint.memory import InMemorySaver
 
 
 load_dotenv()
@@ -16,8 +18,8 @@ def get_location():
     return "Rome, Italy"
 
 # initialize llm
-llm = ChatGoogleGenerativeAI(
-    model="gemini-3.1-flash-lite",
+llm = ChatOpenAI(
+    model="gpt-5.4-nano-2026-03-17",
     temperature=0.7
 )
 
@@ -33,12 +35,16 @@ YOUR WORKFLOW:
 agent = create_agent(
     model=llm,
     tools=[get_weather, get_location],
-    system_prompt=system_prompt
+    system_prompt=system_prompt,
+    checkpointer=InMemorySaver()
 )
 
-user_query = input("Enter your query: ")
+user_query1 = input("Enter your query: ")
+
 # response1 = llm.invoke("How is the weather in Rome?")
-response1 = agent.invoke(
-    {"messages": [{'role': 'user',
-                   'content': user_query}]})
+response1 = agent.invoke({"messages": [{'role': 'user', 'content': user_query1}]})
 print(response1['messages'][-1].content)
+
+user_query2 = input("Enter your query: ")
+response2 = agent.invoke({"messages": [{'role': 'user', 'content': user_query2}]})
+print(response2['messages'][-1].content)
