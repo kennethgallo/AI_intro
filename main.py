@@ -13,7 +13,7 @@ def get_weather(city: str) :
     return {'condition': 'sunny', 'temperature': '25'}
 
 def get_location():
-    """Get user's location. Use this when the user asks about the weather without specifying a city"""
+    """Get the user's location. Use this when the user asks about the weather without specifying a city"""
 
     return "Rome, Italy"
 
@@ -42,9 +42,9 @@ agent = create_agent(
 user_query1 = input("Enter your query: ")
 
 # response1 = llm.invoke("How is the weather in Rome?")
-response1 = agent.invoke({"messages": [{'role': 'user', 'content': user_query1}]})
+response1 = agent.invoke({"messages": [{'role': 'user', 'content': user_query1}]}, {"configurable" : {"thread_id": "1"} })
 print(response1['messages'][-1].content)
 
 user_query2 = input("Enter your query: ")
-response2 = agent.invoke({"messages": [{'role': 'user', 'content': user_query2}]})
+response2 = agent.invoke({"messages": [{'role': 'user', 'content': user_query2}]}, {"configurable" : {"thread_id": "1"} })
 print(response2['messages'][-1].content)
