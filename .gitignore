@@ -221,3 +221,6 @@ __marimo__/
 
 .db
 *.db
+.db*
+.db-wal
+.db-shm
