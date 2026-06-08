@@ -1,4 +1,4 @@
-from langchain_google_genai import ChatGoogleGenerativeAI
+# from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_openai import ChatOpenAI
 from dotenv import load_dotenv
 from langchain.agents import create_agent
@@ -7,12 +7,12 @@ from langgraph.checkpoint.memory import InMemorySaver
 
 load_dotenv()
 
-def get_weather(city: str) :
+def get_weather(city: str)-> dict:
     """Get weather for a given city"""
 
     return {'condition': 'sunny', 'temperature': '25'}
 
-def get_location():
+def get_location() ->str:
     """Get the user's location. Use this when the user asks about the weather without specifying a city"""
 
     return "Rome, Italy"
@@ -39,12 +39,11 @@ agent = create_agent(
     checkpointer=InMemorySaver()
 )
 
-user_query1 = input("Enter your query: ")
+while True:
+    user_query = input("Enter your query: ")
+    if user_query in ['bye', 'quit', 'exit']:
+        break
+    response = agent.invoke({"messages": [{'role': 'user', 'content': user_query}]},
+                             {"configurable" : {"thread_id": "1"} })
 
-# response1 = llm.invoke("How is the weather in Rome?")
-response1 = agent.invoke({"messages": [{'role': 'user', 'content': user_query1}]}, {"configurable" : {"thread_id": "1"} })
-print(response1['messages'][-1].content)
-
-user_query2 = input("Enter your query: ")
-response2 = agent.invoke({"messages": [{'role': 'user', 'content': user_query2}]}, {"configurable" : {"thread_id": "1"} })
-print(response2['messages'][-1].content)
+    print(response['messages'][-1].content)
