@@ -3,6 +3,7 @@ from langchain_openai import ChatOpenAI
 from dotenv import load_dotenv
 from langchain.agents import create_agent
 from langgraph.checkpoint.memory import InMemorySaver
+from langgraph.checkpoint.sqlite import SqliteSaver
 
 
 load_dotenv()
@@ -32,18 +33,19 @@ YOUR WORKFLOW:
     
 2. If the user provides a city, call get_weather(city) directly.
 """
-agent = create_agent(
-    model=llm,
-    tools=[get_weather, get_location],
-    system_prompt=system_prompt,
-    checkpointer=InMemorySaver()
-)
+with SqliteSaver.from_conn_string('checkpoints.db') as checkpointer:
+    agent = create_agent(
+        model=llm,
+        tools=[get_weather, get_location],
+        system_prompt=system_prompt,
+        checkpointer=checkpointer
+    )
 
-while True:
-    user_query = input("Enter your query: ")
-    if user_query in ['bye', 'quit', 'exit']:
-        break
-    response = agent.invoke({"messages": [{'role': 'user', 'content': user_query}]},
-                             {"configurable" : {"thread_id": "1"} })
+    while True:
+        user_query = input("Enter your query: ")
+        if user_query in ['bye', 'quit', 'exit']:
+            break
+        response = agent.invoke({"messages": [{'role': 'user', 'content': user_query}]},
+                                 {"configurable" : {"thread_id": "1"} })
 
-    print(response['messages'][-1].content)
+        print(response['messages'][-1].content)
