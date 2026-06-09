@@ -7,3 +7,8 @@ langchain-openai
 langgraph
 openai
 langgraph-checkpoint-sqlite
+langgraph-checkpoint-postgres
+psycopg[binary]
+fastapi[standard]
+granian
+granian[reload]

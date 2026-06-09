@@ -2,11 +2,13 @@
 from langchain_openai import ChatOpenAI
 from dotenv import load_dotenv
 from langchain.agents import create_agent
-from langgraph.checkpoint.memory import InMemorySaver
-from langgraph.checkpoint.sqlite import SqliteSaver
-
+# from langgraph.checkpoint.memory import InMemorySaver
+from langgraph.checkpoint.postgres import PostgresSaver
+import os
 
 load_dotenv()
+
+DB_URI = os.getenv("SUPABASE_DB_URI")
 
 def get_weather(city: str)-> dict:
     """Get weather for a given city"""
@@ -33,7 +35,8 @@ YOUR WORKFLOW:
     
 2. If the user provides a city, call get_weather(city) directly.
 """
-with SqliteSaver.from_conn_string('checkpoints.db') as checkpointer:
+with PostgresSaver.from_conn_string(DB_URI) as checkpointer:
+    checkpointer.setup()
     agent = create_agent(
         model=llm,
         tools=[get_weather, get_location],
@@ -48,10 +51,10 @@ with SqliteSaver.from_conn_string('checkpoints.db') as checkpointer:
         response = agent.invoke({"messages": [{'role': 'user', 'content': user_query}]},
                                  {"configurable" : {"thread_id": "1"} })
 
-        for i in response['messages']:
-            if i.type == 'human':
-                print("You: ", i.content)
-            if i.type == 'ai' and i.content:
-                print("Agent: ", i.content)
+        # for i in response['messages']:
+        #     if i.type == 'human':
+        #         print("You: ", i.content)
+        #     if i.type == 'ai' and i.content:
+        #         print("Agent: ", i.content)
 
         print(response['messages'][-1].content)
