@@ -48,4 +48,10 @@ with SqliteSaver.from_conn_string('checkpoints.db') as checkpointer:
         response = agent.invoke({"messages": [{'role': 'user', 'content': user_query}]},
                                  {"configurable" : {"thread_id": "1"} })
 
+        for i in response['messages']:
+            if i.type == 'human':
+                print("You: ", i.content)
+            if i.type == 'ai' and i.content:
+                print("Agent: ", i.content)
+
         print(response['messages'][-1].content)
